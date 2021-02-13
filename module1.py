@@ -1,6 +1,6 @@
 #
 # Project 1, Applied Cryptography
-# NYU Tanton School of Engineeering Spring 2021 
+# NYU Tandon School of Engineeering Spring 2021 
 # [names here] 
 #
 #
