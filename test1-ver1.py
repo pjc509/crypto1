@@ -29,21 +29,46 @@ letter_key_values = {" ":0,"a":1,"b":2,"c":3,"d":4,"e":5,"f":6,"g":7,"h":8,"i":9
 letter_key = [" ","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
 L = 500;
 
+kp1 = ("cabooses meltdowns bigmouth makework flippest neutralizers gipped mule antithetical imperials carom masochism stair retsina dullness adeste corsage "
+"saraband promenaders gestational mansuetude fig redress pregame borshts pardoner reforges refutations calendal moaning doggerel dendrology governs "
+"ribonucleic circumscriptions reassimilating machinize rebuilding mezcal fluoresced antepenults blacksmith constance furores chroniclers overlie hoers "
+"jabbing resigner quartics polishers mallow hovelling ch")
+kp2 = ("biorhythmic personalizing abjure greets rewashed thruput kashmir chores fiendishly combatting alliums lolly milder postpaid larry annuli codgers apostatizing "
+"scrim carillon rust grimly lignifying lycanthrope samisen founds millimeters pentagon humidification checkup hilts agonise crumbs rejected kangaroo forenoons grazable acidy "
+"duellist potent recyclability capture memorized psalmed meters decline deduced after oversolicitousness demoralizers ologist conscript cronyisms melodized girdles nonago")
+kp3 = ("hermitage rejoices oxgall bloodstone fisticuff huguenot janitress assailed eggcup jerseyites fetas leipzig copiers pushiness fesse precociously modules navigates "
+"gaiters caldrons lisp humbly datum recite haphazardly dispassion calculability circularization intangibles impressionist jaggy ascribable overseen copses devolvement "
+"permutationists potations linesmen hematic fowler pridefully inversive malthus remainders multiplex petty hymnaries cubby donne ohioans avenues reverts glide photos antiaci")
+kp4 = ("leonardo oxygenate cascade fashion fortifiers annelids co intimates cads expanse rusting quashing julienne hydrothermal defunctive permeation sabines hurries "
+"precalculates discourteously fooling pestles pellucid circlers hampshirites punchiest extremist cottonwood dadoes identifiers retail gyrations dusked opportunities ictus "
+"misjudge neighborly aulder larges predestinate bandstand angling billet drawbridge pantomimes propelled leaned gerontologists candying ingestive museum chlorites maryland s")
+kp5 = ("undercurrents laryngeal elevate betokened chronologist ghostwrites ombres dollying airship probates music debouching countermanded rivalling linky wheedled heydey sours "
+"nitrates bewares rideable woven rerecorded currie vasectomize mousings rootstocks langley propaganda numismatics foetor subduers babcock jauntily ascots nested notifying "
+"mountainside dirk chancellors disassociating eleganter radiant convexity appositeness axonic trainful nestlers applicably correctional stovers organdy bdrm insis")
+
+dictionary = ["awesomeness", "hearkened", "aloneness", "beheld", "courtship", "swoops", "memphis", "attentional", "pintsized", "rustics", "hermeneutics", "dismissive",
+              "delimiting", "proposes", "between", "postilion", "repress", "racecourse", "matures", "directions", "pressed", "miserabilia", "indelicacy", "faultlessly",
+              "chuted", "shorelines", "irony", "intuitiveness", "cadgy", "ferries", "catcher", "wobbly", "protruded", "combusting", "unconvertible", "successors", "footfalls",
+              "bursary", "myrtle", "photocompose"]
+
+
 def main():
 
+    #pjc - update to remove dependency on loading plaintext
     #Load 5 plaintext from dictionary1 for test1
     fname = "plaintext_dictionary_test1.txt"
     test1_text = load_dict(fname)
     kps = load_dict(fname)
     #print(test1_text)
 
-    kp1 = kps[1]
-    kp2 = kps[2]
-    kp3 = kps[3]
-    kp4 = kps[4]
-    kp5 = kps[5]
+    #kp1 = kps[1]
+    #kp2 = kps[2]
+    #kp3 = kps[3]
+    #kp4 = kps[4]
+    #kp5 = kps[5]
 
 
+    #pjc - need to remove dependency on loading from file
     #Load words from dictionary2 for test2
     fname = "word_dictionary_test2.txt"
     dict2_text = load_dict(fname)
@@ -373,55 +398,80 @@ def subtract_letters(message_in, cipher_in):
 
 # Start Backup Test
 def test_1_backup(plaintext, cipher):
-        key_guess_out = "";
-        #key_iteration_top is the reuslt of
-        key_iteration_success = 0;
-        #MAX Length of key in test for itteration
-        length = 4;
+    key_guess_out = "";
+    #random_characters;
+    k=len(cipher)-500;
+    length=4;
+    skip=-1
+    skip2=-1
+    key_iteration_results = test_1_backup_key_reveal_itteration(plaintext, cipher, length, skip, skip2);
+    key_iteration_top = math.ceil(key_iteration_results[2]);
+    #itterates through the potential plain texts to find results
+    while key_iteration_top<=0 and length<25:
+        if(skip2<length):
+            skip2+=1;
+        elif(skip<length):
+            skip+=1
+            skip2=skip+1;
+        else:
+            length+=1
+            skip=-1
+            skip2=-1;
+        key_iteration_results = test_1_backup_key_reveal_itteration(plaintext, cipher, length, skip, skip2);
+        key_iteration_top = math.ceil(key_iteration_results[2]);
+        pass
+    return key_iteration_results;
 
-        key_iteration_results = test_1_backup_key_reveal_itteration(plaintext, cipher,length);
-        #itterates through the potential plain texts to find results
-        while key_iteration_success<=0 and length<25:
-            key_iteration_results = test_1_backup_key_reveal_itteration(plaintext, cipher, length);
-            key_iteration_success = key_iteration_results[2];
-            length+=1;
-            pass
-        return key_iteration_results;
+def test_1_backup_key_reveal_itteration(plaintext, cipher, length, skip, skip2):
 
-def test_1_backup_key_reveal_itteration(plaintext, cipher, length):
-        message_out = 0
-        j=0;
-        correct_guess = 0
-        key_out = 0;
-        while j<5:
-            key_guess = [];
-            i=0;
-            counter = 0;
-                # new
-            key_array = set()
-            while i<500 and len(key_array)<length:
-                #subtracts the cipher from plaintext to get potential value
-                potential_key = subtract_letters(plaintext[j][i],cipher[i]);
-                key_array.add(potential_key)
+    message_out = 0
+    key_out = ""
+    j=0;
+    i=0;
+    correct_guess = 0
+    key_out = 0;
+    while j<5:
+        i=0;
+        key_guess = [];
+        counter = 0;
+        letter_key_counter = {"A":0,"B":0,"C":0,"D":0,"E":0,"F":0,"G":0,"H":0,"I":0,"J":0,"K":0,"L":0,"M":0,"N":0,"O":0,"P":0,"Q":0,"R":0,"S":0,"T":0,"U":0,"V":0,"W":0,"X":0,"Y":0,"Z":0," ":0}
+        # new
+        key_array = set()
+        skip_shift=0;
+        while i<500 and len(key_array)<length:
+            if(skip == i):
                 i+=1;
-                pass
-            key_verified = test_1_verify__key(cipher, plaintext[j], key_array)
-            if key_verified==1:
+                skip_shift+=1;
+            if(skip2 == i):
+                i+=1;
+                skip_shift+=1;
+            potential_key = subtract_letters(plaintext[j][i-skip_shift],cipher[i]);
+            if letter_key_counter[potential_key]==0:
+                letter_key_counter[potential_key]+=1;
+                key_array.add(potential_key)
+
+            i+=1;
+
+            pass
+        key_verified = test_1_verify__key(cipher, plaintext[j], key_array)
+        if key_verified>0:
+
+            if correct_guess == 0:
                 key_out = key_array
                 message_out = j
                 correct_guess = 1
-                return [key_out, message_out, 2];
             else:
                 key_out = -1;
-            j+=1;
-        pass
-        if key_out == -1:
-            correct_guess = 0;
-        return [key_out, message_out, correct_guess];
+        skip_shift = 0;
+        j+=1;
+    pass
+    if key_out == -1:
+        correct_guess = 0;
+    return [key_out, message_out, correct_guess];
+
 
 def test_1_verify__key(cipher, plaintext_value, key_array):
     #key verification is done by calculating the number of random characters that are found using a giving key.  If the random characters is an exact match, the key is 100% accurate
-    global chance_cipher_random;
     number_of_randoms_expected = len(cipher)-500;
     number_of_randoms_recieved = 0;
     length_of_cipher = len(cipher);
@@ -444,7 +494,6 @@ def test_1_verify__key(cipher, plaintext_value, key_array):
         return 0;
     elif(number_of_randoms_recieved == number_of_randoms_expected):
         return 1;
-
 
 #This does a character by character analyis to see if the word can be formed from the probable key
 def testWord(word, cipher_text, key_guess):
@@ -472,6 +521,7 @@ def testWord(word, cipher_text, key_guess):
         return False
     else:
         return True
+
 
 #pjc - reminder is mine code
 
